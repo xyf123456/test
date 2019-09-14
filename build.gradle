@@ -75,3 +75,65 @@ task hello2 {
 最后完成整个项目工程的打包发布。从工程和任务的关系，我们也能看到 Gradle 把
 “分而治之”思想运用得恰到好处，实现中我们一个项目可能包含若干个工程，这样
 使用Gradle就能很好地自动化编译发布了。*/
+
+//任务常见的几种定义方式
+// 第一种，前面见过的
+task hello3 {
+    doLast {
+        println "Hello World!"
+    }
+}
+// 第二种，以字符串形式定义的
+task('hello4') {
+    doLast {
+        println "hello"
+    }
+}
+// 第三种，以字符串形式定义的，
+// 其类型为Copy任务类型，接下来会具体讲解
+task('copy', type: Copy) {
+    from(file('srcDir'))
+    into(buildDir)
+}
+// 第四种，使用create创建
+tasks.create(name: 'copy1', type: Copy) {
+    from(file('srcDir'))
+    into(buildDir)
+}
+// 第四种，使用create创建
+tasks.create(name: 'test') {
+    doLast {
+        println "hello"
+    }
+}
+
+//对任务进行配置，
+task myCopy(type: Copy) {
+    from 'resource'
+    into 'target'
+    include('**/*.txt', '**/*.xml', '**/*.properties')
+}
+//java 风格的配置方式
+Copy myCopy1 = task(myCopy1, type: Copy)
+myCopy1.from 'resources'
+myCopy1.into 'target'
+myCopy1.include('**/*.txt', '**/*.xml', '**/*.properties')
+
+//任务的重写
+task myCopy(overwrite: true) {
+    doLast {
+        println('overwrite the copy.')
+    }
+}
+//跳过任务或禁用某个任务，这个比较简单，当然在实际项目中又是非常实用的一
+// 个技巧，比如，我们构建打包时，有时候不需要打全包，只需要打部分工程，
+// 这时我们就可以通过条件选择进行跳过某些任务执行。
+task hello6 {
+    doLast {
+        println 'hello world'
+    }
+}
+
+hello6.onlyIf { !project.hasProperty('skipHello') }
+//禁用任务
+hello6.enabled=false
