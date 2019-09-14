@@ -1,0 +1,77 @@
+//定义hello的任务，添加了一个doLast动作，这个动作是一个 groovy 的闭包函数
+task hello {
+    doLast {
+        println 'hello world'
+    }
+}
+//我们可以使用一种更简单便捷的方式实现
+task hello1 << {
+    println 'hello world111'
+}
+//任务的依赖关系,构建的任务
+task build {
+    doLast {
+        println 'i am build task!'
+    }
+}
+//发布的任务1
+task release(dependsOn: build) {
+    doLast {
+        println 'i am release  task!'
+    }
+}
+//发布的任务2
+task release1() {
+    doLast {
+        println 'i am release1  task!'
+    }
+}
+//对现有的任务添加依赖关系
+release1.dependsOn build
+
+//对现有的任务添加动作行为
+//方法一
+hello.doFirst {
+    println('hello doFirst!')
+}
+//方法二
+hello.doLast {
+    println('hello doLast!')
+}
+//方法三
+hello {
+    doLast {
+        println('hello doLast2')
+    }
+}
+//访问现有任务的属性值
+hello {
+    doLast {
+        println "hello doLast2 from the $hello.name task."
+    }
+}
+//为任务设置属性值，通过 ext.myProperty 来初始化值
+task myTask {
+    ext.myProperty = "myValue"
+}
+task printTaskProperties {
+    doLast {
+        println myTask.myProperty
+    }
+}
+
+static int add(int a, int b) {
+    a + b;
+}
+//在任务中调用 groovy 方法
+task hello2 {
+    doLast {
+        int a = 1, b = 2;
+        int result = add(a, b);
+        println "a add b is = " + result;
+    }
+}
+/*使用 Gradle 编译工程，其实就是在编译不同的任务，然后根据依赖关系组合执行，
+最后完成整个项目工程的打包发布。从工程和任务的关系，我们也能看到 Gradle 把
+“分而治之”思想运用得恰到好处，实现中我们一个项目可能包含若干个工程，这样
+使用Gradle就能很好地自动化编译发布了。*/
